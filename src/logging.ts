@@ -1,5 +1,3 @@
-import { server } from "./index";
-
 const pinoConfig = {
 	development: {
 		transport: {
