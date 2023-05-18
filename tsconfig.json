@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "lib": ["ES2023"],
+        "module": "Node16",
+        "target": "ES2022",
+        "moduleResolution": "node",
+        "outDir": "dist",
+        "baseUrl": "./",
+        "noImplicitAny": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

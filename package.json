@@ -1,0 +1,30 @@
+{
+  "name": "identity-service",
+  "version": "0.1.0",
+  "description": "An identity service supporting OIDC meant for use in a microservice environment",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon ./src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasLundJensen/identity-service.git"
+  },
+  "author": "Lucas Lund Jensen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LucasLundJensen/identity-service/issues"
+  },
+  "homepage": "https://github.com/LucasLundJensen/identity-service#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "pino-pretty": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "fastify": "^4.17.0"
+  }
+}
