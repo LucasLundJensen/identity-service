@@ -4,7 +4,7 @@ import config from "./config";
 const knex = Knex({
 	client: "pg",
 	connection: {
-		host: "127.0.0.1",
+		host: "database",
 		port: 5432,
 		user: config.POSTGRES_USER,
 		password: config.POSTGRES_PASSWORD,

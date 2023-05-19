@@ -1,9 +1,14 @@
 version: "3.9"
 services:
   identity:
+    depends_on:
+      - database
     build: .
     ports:
       - "4000:4000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
     command: npm run dev
   database:
     image: postgres:15-alpine
@@ -13,3 +18,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+  cache:
+    image: redis:alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - './redis.conf:/usr/local/etc/redis/redis.conf'
