@@ -1,5 +1,6 @@
 const pinoConfig = {
 	development: {
+		level: "debug",
 		transport: {
 			target: "pino-pretty",
 			options: {
