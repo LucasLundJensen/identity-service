@@ -1,14 +1,17 @@
 {
   "name": "identity-service",
   "version": "0.1.0",
-  "description": "An identity service supporting OIDC meant for use in a microservice environment",
+  "description": "An identity service supporting OAuth2 meant for use in a microservice environment",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon ./src/index.ts",
+    "dev": "nodemon -L",
     "start": "node dist/index.js",
     "lint": "eslint ./src",
-    "pretty": "prettier --write ./src/**/*.{js,ts,json}"
+    "pretty": "prettier --write ./src/**/*.{js,ts,json}",
+    "up:dev": "docker-compose -f docker-compose.dev.yml up --force-recreate",
+    "up:prod": "docker-compose up"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,11 @@
   },
   "homepage": "https://github.com/LucasLundJensen/identity-service#readme",
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/oidc-provider": "^8.2.0",
+    "@types/passport": "^1.0.12",
+    "@types/passport-http-bearer": "^1.0.37",
+    "@types/passport-local": "^1.0.35",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.40.0",
@@ -31,6 +39,17 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "fastify": "^4.17.0"
+    "@fastify/middie": "^8.3.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "argon2": "^0.30.3",
+    "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "fastify": "^4.17.0",
+    "jsonwebtoken": "^9.0.0",
+    "knex": "^2.4.2",
+    "oidc-provider": "^8.2.1",
+    "pg": "^8.11.0",
+    "redis": "^4.6.6"
   }
 }

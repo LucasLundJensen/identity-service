@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
         "lib": ["ES2023"],
-        "module": "Node16",
+        "module": "NodeNext",
         "target": "ES2022",
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "outDir": "dist",
         "baseUrl": "./",
         "noImplicitAny": true,
         "forceConsistentCasingInFileNames": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "strictNullChecks": true
     },
     "include": [
         "src/**/*"

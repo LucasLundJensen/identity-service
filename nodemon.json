@@ -1,0 +1,11 @@
+{
+    "exec": "npx ts-node --esm ./src/index.ts",
+    "ext": "ts",
+    "watch": [
+        "src"
+    ],
+    "ignore": [
+        "node_modules",
+        "dist"
+    ]
+}
