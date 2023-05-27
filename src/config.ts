@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 import path from "path";
-import * as url from "url";
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+import { __dirname } from "./utils/path.js";
 
 dotenv.config({ path: path.join(__dirname, "../", ".env") });
 
 const config = {
 	ENV: process.env.ENV || "development",
+	HOST: process.env.HOST || "0.0.0.0",
 	PORT: process.env.PORT || "4000",
 	DB_CONNECTION_STRING: process.env.DB_CONNECTION_STRING || "",
 	POSTGRES_DATABASE: process.env.POSTGRES_DATABASE || "identity",
