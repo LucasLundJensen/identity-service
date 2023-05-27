@@ -1,8 +1,8 @@
 import argon from "argon2";
-import { server } from "..";
-import knex from "../database";
-import { User } from "../types/user.types";
-import { APIResponse } from "../types/api.types";
+import { server } from "../index.js";
+import knex from "../database.js";
+import { User } from "../types/user.types.js";
+import { APIResponse } from "../types/api.types.js";
 
 export async function getAllUsers(): Promise<
 	APIResponse<Pick<User, "id" | "email">[]>
@@ -32,9 +32,10 @@ export async function getUserById(
 ): Promise<APIResponse<Pick<User, "id" | "email">>> {
 	try {
 		const user = await knex<User>("users")
-			.first()
+			.select("email")
+			.select("id")
 			.where("id", id)
-			.returning(["id", "email"]);
+			.first();
 
 		if (!user) {
 			return {
