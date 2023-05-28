@@ -4,13 +4,13 @@ import { envToLogger } from "./logging.js";
 import config from "./config.js";
 import oidc from "./oidc.js";
 // import { addUser, getUserById } from "./services/user.service";
-// import redisClient from "./redis";
+import redisClient from "./redis.js";
 
 export const server = fastify({ logger: envToLogger(config.ENV) ?? true });
 
 const start = async () => {
 	try {
-		// await redisClient.connect();
+		await redisClient.connect();
 
 		await server.register(fastifyMiddie);
 
