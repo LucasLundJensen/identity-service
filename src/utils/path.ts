@@ -1,3 +1,5 @@
 import url from "url";
 
-export const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+// Call this function with importMetaUrl as `import.meta.url`.
+export const __dirname = (importMetaUrl: string) =>
+	url.fileURLToPath(new URL(".", importMetaUrl));
