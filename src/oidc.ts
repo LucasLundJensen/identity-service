@@ -17,6 +17,11 @@ const configuration: Configuration = {
 	clientBasedCORS(ctx, origin, client) {
 		return true;
 	},
+	interactions: {
+		url(ctx, interaction) {
+			return `oidc/interaction/${interaction.uid}`;
+		},
+	},
 	async findAccount(ctx, sub) {
 		const user = await getUserByEmail(sub);
 
