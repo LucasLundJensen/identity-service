@@ -3,10 +3,10 @@ import fastifyMiddie from "@fastify/middie";
 import { envToLogger } from "./logging.js";
 import config from "./config.js";
 import oidc from "./oidc.js";
-// import { addUser, getUserById } from "./services/user.service";
 import redisClient from "./redis.js";
+import { addUser } from "./services/user.service.js";
 
-export const server = fastify({ logger: envToLogger(config.ENV) ?? true });
+export const server = fastify({ logger: envToLogger(config.NODE_ENV) ?? true });
 
 const start = async () => {
 	try {

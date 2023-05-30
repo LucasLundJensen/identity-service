@@ -3,7 +3,7 @@ import config from "./config.js";
 
 const databaseConfig: { [key: string]: Knex.Config } = {
 	development: {
-		client: "postgresql",
+		client: "pg",
 		connection: {
 			database: config.POSTGRES_DATABASE,
 			user: config.POSTGRES_USER,
@@ -19,7 +19,7 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 	},
 
 	staging: {
-		client: "postgresql",
+		client: "pg",
 		connection: {
 			database: config.POSTGRES_DATABASE,
 			user: config.POSTGRES_USER,
@@ -35,7 +35,7 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 	},
 
 	production: {
-		client: "postgresql",
+		client: "pg",
 		connection: {
 			database: config.POSTGRES_DATABASE,
 			user: config.POSTGRES_USER,
@@ -51,4 +51,4 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 	},
 };
 
-module.exports = databaseConfig;
+export default databaseConfig;

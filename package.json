@@ -5,13 +5,15 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "dev": "nodemon -L",
     "start": "node dist/index.js",
     "lint": "eslint ./src",
     "pretty": "prettier --write ./src/**/*.{js,ts,json}",
     "up:dev": "docker-compose -f docker-compose.dev.yml up --force-recreate",
-    "up:prod": "docker-compose up"
+    "up:prod": "docker-compose up",
+    "migrate:latest": "knex migrate:latest --knexfile dist/knexfile.js",
+    "migrate:rollback": "knex migrate:rollback --knexfile dist/knexfile.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
   },
   "homepage": "https://github.com/LucasLundJensen/identity-service#readme",
   "devDependencies": {
+    "@types/esm": "^3.2.0",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/oidc-provider": "^8.2.0",
     "@types/passport": "^1.0.12",
@@ -39,12 +42,12 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@fastify/cors": "^8.3.0",
     "@fastify/middie": "^8.3.0",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
-    "esm": "^3.2.25",
     "fastify": "^4.17.0",
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",

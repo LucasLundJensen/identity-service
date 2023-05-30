@@ -7,7 +7,7 @@ dotenv.config({
 });
 
 const config = {
-	ENV: process.env.ENV || "development",
+	NODE_ENV: process.env.NODE_ENV || "development",
 	HOST: process.env.HOST || "0.0.0.0",
 	PORT: process.env.PORT || "4000",
 	DB_CONNECTION_STRING: process.env.DB_CONNECTION_STRING || "",
@@ -17,6 +17,7 @@ const config = {
 	REDIS_USERNAME: process.env.REDIS_USERNAME || "",
 	REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
 	REDIS_URL: process.env.REDIS_URL || "",
+	CONFIG_FOLDER_PATH: process.env.CONFIG_FOLDER_PATH || "",
 };
 
 export default config;
