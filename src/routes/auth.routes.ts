@@ -1,15 +1,20 @@
+
 import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
+import argon from 'argon2';
 import oidc from '../oidc.js';
+import { getUserByEmail } from '../services/user.service.js';
 
 
 const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance, options: FastifyPluginOptions) => {
     server.get('/oidc/interaction/:uid', async (req, res) => {
+      
         try {
           const {
             uid, prompt, params, session,
           } = await oidc.interactionDetails(req.raw, res.raw);
     
           const client = await oidc.Client.find(params.client_id as string);
+          server.log.debug(`Interaction endpoint called with prompt ${prompt.name}`)
     
           switch (prompt.name) {
             case 'login': {
@@ -20,18 +25,24 @@ const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance, options: 
                 params,
                 title: 'Sign-in',
                 session: session || undefined,
-                dbg: {},
+                dbg: {
+                  params: params,
+                  prompt: prompt
+                },
               });
             }
             case 'consent': {
-              return res.view('../templates/authorize.ejs', {
+              return res.view('src/templates/authorize.ejs', {
                 client,
                 uid,
                 details: prompt.details,
                 params,
                 title: 'Authorize',
                 session: session || undefined,
-                dbg: {},
+                dbg: {
+                  params: params,
+                  prompt: prompt
+                },
               });
             }
             default:
@@ -41,77 +52,100 @@ const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance, options: 
           return err;
         }
       });
+
+
+
+
+    server.post<{
+      Body: {
+        email: string,
+        password: string
+      }
+    }>('/oidc/interaction/:uid/login', async (req, res) => {
+      try {
+        const { prompt: { name }, grantId } = await oidc.interactionDetails(req.raw, res.raw);
+        
+        if(name !== "login") return;
+
+        const user = await getUserByEmail(req.body.email);
+        if(user.status != "Found" || user.data === null) return;
+
+        const verified = await argon.verify(user.data.password, req.body.password);
+        if(!verified) return;
+
+        const result = {
+          login: {
+            accountId: user.data.id.toString(),
+          },
+        };
+        return await oidc.interactionFinished(req.raw, res.raw, result, { mergeWithLastSubmission: false });
+      } catch (err) {
+        return err;
+      }
+    });
+
+    server.post('/oidc/interaction/:uid/confirm', async (req, res) => {
+      try {
+        const interactionDetails = await oidc.interactionDetails(req.raw, res.raw);
+        const { prompt: { name } } = interactionDetails;
+        const accountId = interactionDetails.session?.accountId;
+        const params = interactionDetails.params as any;
+        const details = interactionDetails.prompt.details as any;
+
+
+        if(name !== "consent") return;
+  
+        let { grantId } = interactionDetails;
+        let grant = new oidc.Grant({
+          accountId,
+          clientId: params.client_id,
+        });
+  
+        if (grantId) {
+          // we'll be modifying existing grant in existing session
+          const existingGrant = await oidc.Grant.find(grantId);
+          if(existingGrant) {
+            grant = existingGrant;
+          }
+        }
+  
+        if (details.missingOIDCScope) {
+          grant.addOIDCScope(details.missingOIDCScope.join(' '));
+        }
+        if (details.missingOIDCClaims) {
+          grant.addOIDCClaims(details.missingOIDCClaims);
+        }
+        if (details.missingResourceScopes) {
+          for (const [indicator, scopes] of Object.entries(details.missingResourceScopes)) {
+            grant.addResourceScope(indicator, (scopes as any[]).join(' '));
+          }
+        }
+  
+        grantId = await grant.save();
+  
+        const consent: {grantId?: string} = {};
+        if (!interactionDetails.grantId) {
+          // we don't have to pass grantId to consent, we're just modifying existing one
+          consent.grantId = grantId;
+        }
+  
+        const result = { consent };
+        await oidc.interactionFinished(req.raw, res.raw, result, { mergeWithLastSubmission: true });
+      } catch (err) {
+        return err;
+      }
+    });
+
 }
+
+
+
 
 export default AuthRoutes;
 
 
 
 
-//   app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
-//     try {
-//       const { prompt: { name } } = await provider.interactionDetails(req, res);
-//       assert.equal(name, 'login');
-//       const account = await Account.findByLogin(req.body.login);
-
-//       const result = {
-//         login: {
-//           accountId: account.accountId,
-//         },
-//       };
-
-//       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false });
-//     } catch (err) {
-//       next(err);
-//     }
-//   });
-
-//   app.post('/interaction/:uid/confirm', setNoCache, body, async (req, res, next) => {
-//     try {
-//       const interactionDetails = await provider.interactionDetails(req, res);
-//       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
-//       assert.equal(name, 'consent');
-
-//       let { grantId } = interactionDetails;
-//       let grant;
-
-//       if (grantId) {
-//         // we'll be modifying existing grant in existing session
-//         grant = await provider.Grant.find(grantId);
-//       } else {
-//         // we're establishing a new grant
-//         grant = new provider.Grant({
-//           accountId,
-//           clientId: params.client_id,
-//         });
-//       }
-
-//       if (details.missingOIDCScope) {
-//         grant.addOIDCScope(details.missingOIDCScope.join(' '));
-//       }
-//       if (details.missingOIDCClaims) {
-//         grant.addOIDCClaims(details.missingOIDCClaims);
-//       }
-//       if (details.missingResourceScopes) {
-//         for (const [indicator, scopes] of Object.entries(details.missingResourceScopes)) {
-//           grant.addResourceScope(indicator, scopes.join(' '));
-//         }
-//       }
-
-//       grantId = await grant.save();
-
-//       const consent = {};
-//       if (!interactionDetails.grantId) {
-//         // we don't have to pass grantId to consent, we're just modifying existing one
-//         consent.grantId = grantId;
-//       }
-
-//       const result = { consent };
-//       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: true });
-//     } catch (err) {
-//       next(err);
-//     }
-//   });
 
 //   app.get('/interaction/:uid/abort', setNoCache, async (req, res, next) => {
 //     try {

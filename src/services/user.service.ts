@@ -62,10 +62,9 @@ export async function getUserById(
 
 export async function getUserByEmail(
 	email: string
-): Promise<APIResponse<Pick<User, "email">>> {
+): Promise<APIResponse<User>> {
 	try {
 		const user = await knex<User>("users")
-			.select("email")
 			.where("email", email)
 			.first();
 
@@ -94,7 +93,7 @@ export async function getUserByEmail(
 
 export async function addUser(
 	data: Pick<User, "email" | "password">
-): Promise<APIResponse<Pick<User, "id" | "email">>> {
+): Promise<APIResponse<Pick<User, "id" | "email">[]>> {
 	// Make sure email isn't already registered.
 	const existingResponse = await getUserByEmail(data.email);
 	if (existingResponse.data) {

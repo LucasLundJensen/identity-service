@@ -11,6 +11,7 @@
     "lint": "eslint ./src",
     "pretty": "prettier --write ./src/**/*.{js,ts,json}",
     "up:dev": "docker-compose -f docker-compose.dev.yml up --force-recreate",
+    "docker:build:dev": "docker-compose -f docker-compose.dev.yml build",
     "up:prod": "docker-compose up",
     "migrate:latest": "knex migrate:latest --knexfile dist/knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile dist/knexfile.js"
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
+    "@fastify/formbody": "^7.4.0",
     "@fastify/middie": "^8.3.0",
     "@fastify/view": "^7.4.1",
     "ajv": "^8.12.0",

@@ -17,7 +17,7 @@ const config = {
 	REDIS_USERNAME: process.env.REDIS_USERNAME || "",
 	REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
 	REDIS_URL: process.env.REDIS_URL || "",
-	CONFIG_FOLDER_PATH: process.env.CONFIG_FOLDER_PATH || "",
+	CONFIG_FOLDER_PATH: process.env.CONFIG_FOLDER_PATH || "./config/",
 };
 
 export default config;

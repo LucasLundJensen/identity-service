@@ -1,3 +1,6 @@
-<p>login page</p>
+<form autocomplete="off" action="/oidc/interaction/<%= uid %>/login" method="post">
+    <input required name="email" type="text" placeholder="Email" autofocus="on">
+    <input required name="password" type="password" placeholder="Password">
 
-<% console.log(params) %>
+    <button type="submit">Sign-in</button>
+</form>

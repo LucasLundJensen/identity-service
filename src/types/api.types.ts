@@ -1,6 +1,6 @@
 export interface APIResponse<T> {
 	message?: string;
-	data: T | T[] | null;
+	data: T | null;
 	status: APIStatus;
 }
 

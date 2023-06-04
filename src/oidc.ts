@@ -1,5 +1,10 @@
-import Provider, { Configuration } from "oidc-provider";
+import Provider, {
+	Configuration,
+	KoaContextWithOIDC,
+	errors,
+} from "oidc-provider";
 import config from "./config.js";
+import { server } from "./index.js";
 import path from "path";
 import fs from "fs";
 import { promisify } from "util";
@@ -28,11 +33,15 @@ const configuration: Configuration = {
 		if (user.data === null) return undefined;
 
 		return {
-			accountId: sub,
-			claims(use, scope, claims, rejected) {
+			accountId: user.data.id.toString(),
+			async claims(use, scope) {
+				if (user.data) {
+					return {
+						sub: user.data.id.toString(),
+					};
+				}
 				return {
 					sub,
-					user: user.data,
 				};
 			},
 		};
@@ -43,5 +52,16 @@ const oidc = new Provider(
 	`http://${config.HOST}:${config.PORT}`,
 	configuration
 );
+
+function handleOIDCError(
+	ctx: KoaContextWithOIDC,
+	err: errors.OIDCProviderError
+) {
+	server.log.error(err, "Error from OIDC");
+}
+
+oidc.on("grant.error", handleOIDCError);
+oidc.on("introspection.error", handleOIDCError);
+oidc.on("server_error", handleOIDCError);
 
 export default oidc;
