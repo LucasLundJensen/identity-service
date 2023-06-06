@@ -2,6 +2,7 @@ import fastify from "fastify";
 import fastifyMiddie from "@fastify/middie";
 import fasitfyView from "@fastify/view";
 import fastifyFormbody from "@fastify/formbody";
+import fastifyCors from "@fastify/cors";
 import ejs from "ejs";
 import { envToLogger } from "./logging.js";
 import config from "./config.js";
@@ -17,6 +18,7 @@ const start = async () => {
 	try {
 		await redisClient.connect();
 
+		await server.register(fastifyCors);
 		await server.register(fastifyFormbody);
 		await server.register(fastifyMiddie);
 		await server.register(fasitfyView, {

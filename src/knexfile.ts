@@ -15,6 +15,7 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 		},
 		migrations: {
 			tableName: "knex_migrations",
+			directory: "./migrations/",
 		},
 	},
 
@@ -31,6 +32,7 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 		},
 		migrations: {
 			tableName: "knex_migrations",
+			directory: "./migrations/",
 		},
 	},
 
@@ -47,6 +49,7 @@ const databaseConfig: { [key: string]: Knex.Config } = {
 		},
 		migrations: {
 			tableName: "knex_migrations",
+			directory: "./migrations/",
 		},
 	},
 };

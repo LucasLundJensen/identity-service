@@ -1,5 +1,5 @@
 {
-    "exec": "npx ts-node --esm ./src/index.ts",
+    "exec": "node --loader ts-node/esm --inspect=0.0.0.0 src/index.ts",
     "ext": "ts",
     "watch": [
         "src"

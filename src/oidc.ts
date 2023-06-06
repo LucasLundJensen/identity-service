@@ -8,8 +8,10 @@ import { server } from "./index.js";
 import path from "path";
 import fs from "fs";
 import { promisify } from "util";
-import { getUserByEmail } from "./services/user.service.js";
-
+import { getUserByEmail, getUserById } from "./services/user.service.js";
+import Adapter from "./adapter.js";
+import knex from "./database.js";
+import { User } from "types/user.types.js";
 const readFileAsync = promisify(fs.readFile);
 
 const clients = await readFileAsync(
@@ -17,27 +19,34 @@ const clients = await readFileAsync(
 	"utf-8"
 );
 
+const adapter = Adapter(knex);
+
 const configuration: Configuration = {
+	adapter: adapter,
+	features: {
+		devInteractions: {
+			enabled: false,
+		},
+	},
 	clients: JSON.parse(clients),
 	clientBasedCORS(ctx, origin, client) {
 		return true;
 	},
 	interactions: {
 		url(ctx, interaction) {
-			return `oidc/interaction/${interaction.uid}`;
+			return `/oidc/interaction/${interaction.uid}`;
 		},
 	},
 	async findAccount(ctx, sub) {
-		const user = await getUserByEmail(sub);
-
-		if (user.data === null) return undefined;
+		const user = (await getUserById(+sub)).data;
+		if (user === null) return undefined;
 
 		return {
-			accountId: user.data.id.toString(),
+			accountId: sub,
 			async claims(use, scope) {
-				if (user.data) {
+				if (user) {
 					return {
-						sub: user.data.id.toString(),
+						sub: user.id.toString(),
 					};
 				}
 				return {
@@ -58,10 +67,19 @@ function handleOIDCError(
 	err: errors.OIDCProviderError
 ) {
 	server.log.error(err, "Error from OIDC");
+	server.log.error(ctx.oidc.entities, "Entities from OIDC");
 }
 
 oidc.on("grant.error", handleOIDCError);
 oidc.on("introspection.error", handleOIDCError);
 oidc.on("server_error", handleOIDCError);
+
+oidc.on("authorization.accepted", (ctx) => {
+	server.log.error(ctx.oidc.entities, "Entities from OIDC");
+});
+
+oidc.on("authorization.success", (ctx) => {
+	server.log.error(ctx.oidc.entities, "Entities from OIDC");
+});
 
 export default oidc;

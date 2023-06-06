@@ -41,8 +41,8 @@ dependencies:
     specifier: ^2.4.2
     version: 2.4.2(pg@8.11.0)
   oidc-provider:
-    specifier: ^8.2.1
-    version: 8.2.1
+    specifier: ^8.2.2
+    version: 8.2.2
   pg:
     specifier: ^8.11.0
     version: 8.11.0
@@ -1551,9 +1551,9 @@ packages:
       slash: 3.0.0
     dev: true
 
-  /got@12.6.0:
-    resolution: {integrity: sha512-WTcaQ963xV97MN3x0/CbAriXFZcXCfgxVp91I+Ze6pawQOa7SgzwSx2zIJJsX+kTajMnVs0xcFD1TxZKFqhdnQ==}
-    engines: {node: '>=14.16'}
+  /got@13.0.0:
+    resolution: {integrity: sha512-XfBk1CxOOScDcMr9O1yKkNaQyy865NbYs+F7dr4H0LZMVgCj2Le59k6PqbNHoL5ToeaEQUYh6c6yMfVcc6SJxA==}
+    engines: {node: '>=16'}
     dependencies:
       '@sindresorhus/is': 5.3.0
       '@szmarczak/http-timer': 5.0.1
@@ -2201,14 +2201,14 @@ packages:
     resolution: {integrity: sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==}
     dev: false
 
-  /oidc-provider@8.2.1:
-    resolution: {integrity: sha512-BSHG9+8XjRGVmDy4wOFgtLCgXodhOdGx5GoGZgkJjllEgAWwXA5PMVj6LTzgRSp/5ngpmuvCBcD1Ec6v+iyMjA==}
+  /oidc-provider@8.2.2:
+    resolution: {integrity: sha512-zHXW8vzTuB0mJO3F/m+dz62/HII+qqMqgLGCQ5W/9Ojz6Jqe5voqA67ytvvHGkhoqgXCuYigLg9TBvbVnZQhGw==}
     dependencies:
       '@koa/cors': 4.0.0
       '@koa/router': 12.0.0
       debug: 4.3.4
       eta: 2.2.0
-      got: 12.6.0
+      got: 13.0.0
       jose: 4.14.4
       jsesc: 3.0.2
       koa: 2.14.2

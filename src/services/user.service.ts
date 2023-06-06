@@ -27,15 +27,9 @@ export async function getAllUsers(): Promise<
 	}
 }
 
-export async function getUserById(
-	id: number
-): Promise<APIResponse<Pick<User, "id" | "email">>> {
+export async function getUserById(id: number): Promise<APIResponse<User>> {
 	try {
-		const user = await knex<User>("users")
-			.select("email")
-			.select("id")
-			.where("id", id)
-			.first();
+		const user = await knex<User>("users").where("id", id).first();
 
 		if (!user) {
 			return {
@@ -64,9 +58,7 @@ export async function getUserByEmail(
 	email: string
 ): Promise<APIResponse<User>> {
 	try {
-		const user = await knex<User>("users")
-			.where("email", email)
-			.first();
+		const user = await knex<User>("users").where("email", email).first();
 
 		if (!user) {
 			return {
