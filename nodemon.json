@@ -1,0 +1,11 @@
+{
+    "exec": "node --loader ts-node/esm --inspect=0.0.0.0 src/index.ts",
+    "ext": "ts",
+    "watch": [
+        "src"
+    ],
+    "ignore": [
+        "node_modules",
+        "dist"
+    ]
+}
