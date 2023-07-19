@@ -1,7 +1,13 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import argon from "argon2";
 import oidc from "../oidc.js";
-import { getUserByEmail } from "../services/user.service.js";
+import {
+	activateUser,
+	addUser,
+	getUserByEmail,
+	getUserById,
+} from "../services/user.service.js";
+import config from "../config.js";
 
 const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance) => {
 	server.get("/.well-known/openid-configuration", async (req, res) => {
@@ -31,6 +37,20 @@ const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance) => {
 						details: prompt.details,
 						params,
 						title: "Sign-in",
+						session: session || undefined,
+						dbg: {
+							params: params,
+							prompt: prompt,
+						},
+					});
+				}
+				case "create": {
+					return res.view("src/templates/register.ejs", {
+						client,
+						uid,
+						details: prompt.details,
+						params,
+						title: "Sign-up",
 						session: session || undefined,
 						dbg: {
 							params: params,
@@ -95,9 +115,75 @@ const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance) => {
 		}
 	});
 
+	server.post<{
+		Body: {
+			email: string;
+			password: string;
+		};
+	}>("/oidc/interaction/:uid/create", async (req, res) => {
+		try {
+			const interaction = await oidc.interactionDetails(req.raw, res.raw);
+
+			if (interaction.prompt.name !== "create") return;
+
+			const userAdded = await addUser({
+				email: req.body.email,
+				password: req.body.password,
+			});
+
+			if (userAdded.status !== "Added" || !userAdded.data) return;
+
+			const signUpToken = userAdded.data.signUpToken;
+
+			// URL for confirming email
+			const confirmUrl = `http://${config.HOST}:${config.PORT}/oidc/interaction/${interaction.uid}/confirm?token=${signUpToken}&id=${userAdded.data.id}`;
+			server.log.debug(confirmUrl, "Confirmation URL");
+
+			// Send email to confirm email (Skipped for now)
+
+			// Render needed confirmation
+			return res.view("src/templates/confirm.ejs");
+		} catch (err) {
+			return err;
+		}
+	});
+
+	server.get<{
+		Querystring: {
+			id: number;
+			token: string;
+			redirect_url: string;
+		};
+	}>("/oidc/interaction/:uid/confirm", async (req, res) => {
+		try {
+			const activated = await activateUser({
+				id: req.query.id,
+				signUpToken: req.query.token,
+			});
+
+			if (activated.status !== "Updated" || !activated.data) return;
+
+			const user = await getUserById(req.query.id);
+			if (user.status !== "Found" || !user.data) return;
+
+			const result = {
+				create: {
+					accountId: user.data.id.toString(),
+				},
+				login: {
+					accountId: user.data.id.toString(),
+				},
+			};
+			return await oidc.interactionFinished(req.raw, res.raw, result, {
+				mergeWithLastSubmission: false,
+			});
+		} catch (err) {
+			return err;
+		}
+	});
+
 	server.post("/oidc/interaction/:uid/confirm", async (req, res) => {
 		try {
-			server.log.info("CONFIRM ENDPOINT HAS BEEN REACHED!");
 			const interactionDetails = await oidc.interactionDetails(
 				req.raw,
 				res.raw

@@ -10,4 +10,5 @@ export type APIStatus =
 	| "Deleted"
 	| "Found"
 	| "OperationFailed"
-	| "NotFound";
+	| "NotFound"
+	| "Updated";

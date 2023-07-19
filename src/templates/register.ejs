@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Login</title>
+		<title>Register</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -93,11 +93,11 @@
 	<body>
 		<form
 			autocomplete="off"
-			action="/oidc/interaction/<%= uid %>/login"
+			action="/oidc/interaction/<%= uid %>/create"
 			method="post"
 			class="login-container"
 		>
-			<h1 id="login-text">Login</h1>
+			<h1 id="login-text">Register</h1>
 			<div class="input-container">
 				<div class="input-group">
 					<label for="email">Email</label>
@@ -156,6 +156,6 @@
 				</div>
 				<button id="submit-button" type="submit">Sign-in</button>
 			</div>
-		</body>
 		</form>
+	</body>
 </html>
