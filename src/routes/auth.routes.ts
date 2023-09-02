@@ -13,6 +13,31 @@ const AuthRoutes: FastifyPluginAsync = async (server: FastifyInstance) => {
 	server.get("/.well-known/openid-configuration", async (req, res) => {
 		res.redirect("http://localhost:4000/oidc/.well-known/openid-configuration");
 	});
+
+	server.post<{
+		Body: {
+			id_token: string;
+			client_id: string;
+		};
+	}>("/oidc/validate", async (req, res) => {
+		if (!req.body.id_token) {
+			return res.status(401).send("No token supplied");
+		}
+
+		const client = await oidc.Client.find(req.body.client_id);
+
+		if (!client) {
+			return res.status(401).send("Invalid client");
+		}
+
+		try {
+			await oidc.IdToken.validate(req.body.id_token, client);
+			return res.status(200).send("Valid token");
+		} catch (error) {
+			return res.status(401).send("Invalid token");
+		}
+	});
+
 	server.get("/oidc/interaction/:uid", async (req, res) => {
 		try {
 			server.log.info("Interaction :UID endpoint activated");
